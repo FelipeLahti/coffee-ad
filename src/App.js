@@ -1,7 +1,7 @@
-import React, { useContext, useState } from "react";
-import ReactDOM from "react-dom";
+import React, { useState } from "react";
 import "./App.css";
-import regexifyString from "regexify-string";
+import { AdContext } from "./ads/AdContext";
+import { AdKeywordsEnhancer } from "./ads/AdKeywordsEnhancer";
 
 function App() {
   const [currentWord, setCurrentWord] = useState();
@@ -16,65 +16,6 @@ function App() {
     </AdContext.Provider>
   );
 }
-
-const AdContext = React.createContext({
-  currentWord: undefined,
-  setCurrentWord: () => {},
-});
-
-const AdBanner = ({ marketingMessage, callToActionText, url }) => {
-  return (
-    <div className={"banner"}>
-      {marketingMessage}
-      <a className={"adButton"} target={"_blank"} href={url} rel="noreferrer">
-        {callToActionText}
-      </a>
-    </div>
-  );
-};
-
-const CoffeeBanner = () => (
-  <AdBanner
-    marketingMessage={"Love coffee?"}
-    callToActionText={"Buy Coffee Now"}
-    url={"https://www.google.com/search?q=coffee"}
-  />
-);
-
-const EspressoBanner = () => (
-  <AdBanner
-    marketingMessage={"Learn to make espresso"}
-    callToActionText={"Sign Up Now"}
-    url={"https://www.google.com/search?q=espresso"}
-  />
-);
-
-const adKeywords = {
-  coffee: <CoffeeBanner />,
-  espresso: <EspressoBanner />,
-};
-
-const AdKeywordsEnhancer = ({ text }) => {
-  const { currentWord, setCurrentWord } = useContext(AdContext);
-
-  const onClick = (keyword) => {
-    setCurrentWord(keyword);
-    ReactDOM.render(adKeywords[keyword], document.getElementById("adBanner"));
-  };
-
-  return regexifyString({
-    pattern: /(coffee|espresso)/gim, //Could be improved
-    decorator: (match, index) => {
-      const color = match === currentWord ? "green" : "#61dafb";
-      return (
-        <a href={"#" + match} style={{ color }} onClick={() => onClick(match)}>
-          {match}
-        </a>
-      );
-    },
-    input: text,
-  });
-};
 
 const CoffeeSummary = () => {
   const summary =
